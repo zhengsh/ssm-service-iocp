@@ -28,6 +28,8 @@ public class ServiceContent {
         serviceMap.put(CommandEnum.A004.getCode(), new LoginServiceImpl());
         serviceMap.put(CommandEnum.A007.getCode(), new FailServiceImpl());
         serviceMap.put(CommandEnum.A008.getCode(), new MessageServiceImpl());
+        // TODO 其他指令处理
+        // serviceMap.put(CommandEnum.A008.getCode(), new MessageServiceImpl());
     }
 
     public static ServiceContent getInstance() {
