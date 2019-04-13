@@ -48,9 +48,6 @@ public class MessageServiceImpl extends AbstractMessageService implements Messag
 
                 // todo 都不在线，直接进入schedule直到过期
             }
-        } else {
-            // 非法用户,断开连接
-            //ctx.disconnect();
         }
     }
 }

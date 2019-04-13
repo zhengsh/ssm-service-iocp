@@ -79,14 +79,4 @@ public class CRC16 {
         return crc;
     }
 
-
-    public static void main(String[] args) {
-        byte[] b = new byte[]{
-                (byte) 0x2C, (byte) 0x00, (byte) 0xFF, (byte) 0xFE,
-                (byte) 0xFE, (byte) 0x04, (byte) 0x00, (byte) 0x00,
-                (byte) 0x00, (byte) 0x00};
-
-        System.out.println("计算法:" + crc16CcittXmodemShort(b));
-        System.out.println("十六进制:" + Integer.toHexString(crc16CcittXmodemShort(b)).toUpperCase());
-    }
 }

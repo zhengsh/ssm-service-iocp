@@ -7,10 +7,6 @@ package cn.edu.cqvie.iocp.engine.util;
  */
 public class ByteUtil {
 
-    public static void main(String[] args) {
-        byte[] arr = shortToByteArray((short) 1007);
-        System.out.println(byteArrayToShort(arr));
-    }
 
     public static byte[] shortToByteArray(short value) {
         int temp = value;
