@@ -1,5 +1,6 @@
 package cn.edu.cqvie.iocp.server.task;
 
+import cn.edu.cqvie.iocp.engine.pool.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ public class TaskManager {
 
     private static TaskManager instance = new TaskManager();
 
-    private ExecutorService executors = Executors.newSingleThreadExecutor();
+    private ExecutorService executors = ThreadPool.newThreadExecutor("message-task");
 
     private TaskManager() {
     }
@@ -31,6 +32,5 @@ public class TaskManager {
         } catch (Throwable t) {
             logger.error("task submit err {}", t);
         }
-
     }
 }
