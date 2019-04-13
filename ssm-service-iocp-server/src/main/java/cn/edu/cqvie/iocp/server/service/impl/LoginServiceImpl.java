@@ -34,7 +34,7 @@ public class LoginServiceImpl extends AbstractMessageService implements MessageS
             ctx.writeAndFlush(protocol);
         } else {
             // 非法用户,断开连接
-            //ctx.disconnect();
+            ctx.disconnect();
         }
     }
 }

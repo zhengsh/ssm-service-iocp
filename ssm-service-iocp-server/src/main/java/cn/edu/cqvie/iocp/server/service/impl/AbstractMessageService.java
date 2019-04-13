@@ -11,6 +11,8 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public abstract class AbstractMessageService implements MessageService {
 
+
+
     @Override
     public void callBack(ChannelHandlerContext ctx, MessageProtocol msg) throws Exception {
 

@@ -1,9 +1,6 @@
 package cn.edu.cqvie.iocp.server;
 
 import cn.edu.cqvie.iocp.engine.bean.MessageProtocol;
-import cn.edu.cqvie.iocp.engine.bean.dto.UserDTO;
-import cn.edu.cqvie.iocp.engine.em.CommandEnum;
-import cn.edu.cqvie.iocp.engine.em.DirectionEnum;
 import cn.edu.cqvie.iocp.server.content.ServiceContent;
 import cn.edu.cqvie.iocp.server.content.SessionContent;
 import cn.edu.cqvie.iocp.server.task.TaskManager;
@@ -22,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * 监听客户端
@@ -34,8 +30,6 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageProto
     private static final Logger logger = LoggerFactory.getLogger(MessageReadHandler.class);
 
     private int count;
-    private static ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-    private static Map<String, ChannelId> mappingMap = new ConcurrentHashMap<>();
 
     /**
      * 客户端和服务器建立连接
@@ -115,7 +109,7 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageProto
             if (event.state() == IdleState.READER_IDLE) {
                 // 移除通道
                 SessionContent.getInstance().remove(ctx.channel());
-                //ctx.disconnect();
+                ctx.disconnect();
                 logger.info("超时关闭 : {}", ctx);
             }
         } else {

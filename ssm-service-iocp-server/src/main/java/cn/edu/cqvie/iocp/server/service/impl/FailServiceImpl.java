@@ -18,6 +18,6 @@ public class FailServiceImpl extends AbstractMessageService implements MessageSe
 
         ctx.writeAndFlush(new MessageProtocol());
         SessionContent.getInstance().remove(ctx.channel());
-        //ctx.disconnect();
+        ctx.disconnect();
     }
 }
