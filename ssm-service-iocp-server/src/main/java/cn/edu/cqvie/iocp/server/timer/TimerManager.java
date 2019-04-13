@@ -5,7 +5,9 @@ import cn.edu.cqvie.iocp.server.task.TaskManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ExecutorService;
+import java.util.TimerTask;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 定时任务/操作补偿
@@ -18,21 +20,35 @@ public class TimerManager {
 
     private static TimerManager instance = new TimerManager();
 
-    private ExecutorService executors = ThreadPool.newThreadExecutor("timer-task");
+    private ScheduledExecutorService scheduledExecutorService =
+            ThreadPool.newScheduledExecutor("timer");
 
     private TimerManager() {
 
     }
 
-    public void submit(HxTimerTask timerTask) {
-        executors.submit(timerTask);
+    public static TimerManager getInstance() {
+        return instance;
     }
 
-    public static class HxTimerTask implements Runnable {
+    public void submit(HxTimerTask timerTask) {
+        int initialDelay =  1000;
+        int period =  1000;
+        scheduledExecutorService.scheduleAtFixedRate(timerTask,initialDelay,period, TimeUnit.MILLISECONDS);
+
+    }
+
+    public static class HxTimerTask extends TimerTask {
 
         @Override
         public void run() {
             //todo 处理不在线的情况
+            logger.info("//todo message task");
         }
+    }
+
+
+    public static void main(String[] args) {
+        TimerManager.getInstance().submit(new HxTimerTask());
     }
 }

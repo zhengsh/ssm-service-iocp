@@ -25,14 +25,6 @@ public class ThreadPool {
         LinkedBlockingQueue<Runnable> linkedBlockingQueue = new LinkedBlockingQueue<>(nThreads * 1000);
         nThreads = Math.max(minThreads, nThreads);
         maximumPoolSize = nThreads * 2;
-        ThreadFactory threadFactory = new ThreadFactory() {
-            int number = 1;
-
-            @Override
-            public Thread newThread(Runnable r) {
-                return new Thread(r, threadNamePrefix + "-pool-" + number++);
-            }
-        };
         ThreadPoolExecutor.AbortPolicy handler = new ThreadPoolExecutor.AbortPolicy();
         return new ThreadPoolExecutor(
                 nThreads,
@@ -40,9 +32,22 @@ public class ThreadPool {
                 keepAliveTime,
                 TimeUnit.MILLISECONDS,
                 linkedBlockingQueue,
-                threadFactory,
+                new HxThreadFactory(threadNamePrefix),
                 handler);
     }
+
+    /**
+     * 创建线程池
+     *
+     * @param threadNamePrefix 线程名称前缀
+     * @return
+     */
+    public static ScheduledExecutorService newScheduledExecutor(String threadNamePrefix) {
+        int nThreads = Runtime.getRuntime().availableProcessors() * 2;
+
+        return new ScheduledThreadPoolExecutor(nThreads, new HxThreadFactory(threadNamePrefix));
+    }
+
 
     public static void main(String[] args) throws InterruptedException {
         ExecutorService executorService = newThreadExecutor("zhangsan");
