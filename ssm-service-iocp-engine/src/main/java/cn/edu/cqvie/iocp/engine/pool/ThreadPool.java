@@ -11,7 +11,29 @@ import java.util.concurrent.*;
  */
 public class ThreadPool {
 
-    public static ExecutorService newThreadExecutor(String threadNamePrefix, int nThreads) {
+    /**
+     * 单线程的线程池
+     *
+     * @param threadNamePrefix
+     * @return
+     */
+    public static ExecutorService newSingleThread(String threadNamePrefix, boolean daemon) {
+        return new ThreadPoolExecutor(1, 1,
+                0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(1024),
+                new HxThreadFactory(threadNamePrefix, daemon)
+                , new ThreadPoolExecutor.AbortPolicy());
+    }
+
+    /**
+     * 创建线程池
+     *
+     * @param threadNamePrefix 线程名称前缀
+     * @param nThreads         线程数量
+     * @param daemon           是否是后台线程
+     * @return
+     */
+    public static ExecutorService newThreadExecutor(String threadNamePrefix, int nThreads, boolean daemon) {
         int minThreads = 2;
         long keepAliveTime = 30L;
         int maximumPoolSize;
@@ -25,8 +47,20 @@ public class ThreadPool {
                 keepAliveTime,
                 TimeUnit.MILLISECONDS,
                 linkedBlockingQueue,
-                new HxThreadFactory(threadNamePrefix),
+                new HxThreadFactory(threadNamePrefix, daemon),
                 handler);
+    }
+
+
+    /**
+     * 创建线程池
+     *
+     * @param threadNamePrefix 线程名称前缀
+     * @param nThreads         线程数量
+     * @return
+     */
+    public static ExecutorService newThreadExecutor(String threadNamePrefix, int nThreads) {
+        return newThreadExecutor(threadNamePrefix, nThreads, false);
     }
 
     /**

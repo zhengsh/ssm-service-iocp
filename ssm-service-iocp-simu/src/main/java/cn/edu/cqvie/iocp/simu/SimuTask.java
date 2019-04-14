@@ -1,10 +1,10 @@
 package cn.edu.cqvie.iocp.simu;
 
 import cn.edu.cqvie.iocp.client.MessageClient;
+import cn.edu.cqvie.iocp.engine.pool.HxThreadFactory;
 import cn.edu.cqvie.iocp.engine.pool.ThreadPool;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * 模拟终端
@@ -18,7 +18,7 @@ public class SimuTask {
     private ExecutorService executorService =
             ThreadPool.newThreadExecutor("simu-task", 1000);
 
-    private SimuTask () {
+    private SimuTask() {
 
     }
 

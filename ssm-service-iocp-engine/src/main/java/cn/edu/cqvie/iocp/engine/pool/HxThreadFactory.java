@@ -10,6 +10,7 @@ import java.util.concurrent.ThreadFactory;
 public class HxThreadFactory implements ThreadFactory {
 
     private String prefix;
+    private boolean daemon;
     private int number = 1;
 
     public HxThreadFactory() {
@@ -19,8 +20,16 @@ public class HxThreadFactory implements ThreadFactory {
         this.prefix = prefix;
     }
 
+    public HxThreadFactory(String prefix, boolean daemon) {
+        this.prefix = prefix;
+        this.daemon = daemon;
+    }
+
     @Override
     public Thread newThread(Runnable r) {
-        return new Thread(r, prefix + "-pool-" + number++);
+
+        Thread thread = new Thread(r, prefix + "-pool-" + number++);
+        thread.setDaemon(daemon);
+        return thread;
     }
 }
