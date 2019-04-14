@@ -1,7 +1,8 @@
 package cn.edu.cqvie.iocp.client.handler;
 
 import cn.edu.cqvie.iocp.client.ConnectManger;
-import cn.edu.cqvie.iocp.client.content.StatisticalContent;
+import cn.edu.cqvie.iocp.client.content.ControlContent;
+import cn.edu.cqvie.iocp.client.content.ServiceContent;
 import cn.edu.cqvie.iocp.engine.bean.MessageProtocol;
 import cn.edu.cqvie.iocp.engine.bean.dto.MessageDTO;
 import cn.edu.cqvie.iocp.engine.bean.dto.UserDTO;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -36,8 +38,7 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
     private long loginTime;
     private long messageTime;
 
-    private final String username = "zhangsan";
-    private final String password = "password";
+    private final String username = uuid();
     private Map<Integer, CommandEnum> message = new ConcurrentHashMap<>();
 
     @Override
@@ -45,6 +46,7 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
         logger.info("通道已连接！！");
 
         int serialNum = ++this.serialNum;
+        String password = "password";
         MessageProtocol protocol = new MessageProtocol(
                 serialNum,
                 DirectionEnum.REQUEST.getCode(),
@@ -58,6 +60,10 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
             message.put(serialNum, CommandEnum.A004);
         }
 
+    }
+
+    private String uuid() {
+        return UUID.randomUUID().toString().replace("-", "");
     }
 
     @Override
@@ -76,6 +82,9 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         logger.info("断线了。。。。。。");
         //使用过程中断线重连
+        ControlContent instance = ControlContent.getInstance();
+        instance.remove(username);
+
         final EventLoop eventLoop = ctx.channel().eventLoop();
         eventLoop.schedule(() -> {
             ConnectManger.getInstance().start();
@@ -95,7 +104,7 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
             // 登录成功
             if (message.containsKey(msg.getPacketNo())) {
 
-                StatisticalContent instance = StatisticalContent.getInstance();
+                ControlContent instance = ControlContent.getInstance();
 
                 CommandEnum commandEnum = message.get(msg.getPacketNo());
                 if (commandEnum.equals(CommandEnum.A004)) {
@@ -152,7 +161,7 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
                 logger.info("长期没收到服务器推送数据");
                 //可以选择重新连接
             } else if (event.state().equals(IdleState.WRITER_IDLE)) {
-                logger.info("长期未向服务器发送数据");
+                logger.info("长期未向服务器发送数据, 客户端发送心跳信息");
                 if (SystemConstant.HEARTBEAT) {
                     //发送心跳包
                     Map<String, String> map = new HashMap<>();

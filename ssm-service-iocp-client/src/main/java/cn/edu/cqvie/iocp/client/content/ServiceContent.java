@@ -1,5 +1,7 @@
 package cn.edu.cqvie.iocp.client.content;
 
+import cn.edu.cqvie.iocp.client.service.impl.LoginServiceImpl;
+import cn.edu.cqvie.iocp.engine.em.CommandEnum;
 import cn.edu.cqvie.iocp.engine.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +24,7 @@ public class ServiceContent {
 
     private ServiceContent() {
         // TODO 客户端业务处理
-//        serviceMap.put(CommandEnum.A004.getCode(), new LoginServiceImpl());
+        serviceMap.put(CommandEnum.A004.getCode(), new LoginServiceImpl());
 //        serviceMap.put(CommandEnum.A007.getCode(), new FailServiceImpl());
     }
 
