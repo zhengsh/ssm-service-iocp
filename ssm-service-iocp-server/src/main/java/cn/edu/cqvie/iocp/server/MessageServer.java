@@ -44,7 +44,7 @@ public class MessageServer {
                     .childHandler(new MessageChannelInitializer())
                     .option(ChannelOption.SO_BACKLOG, 4096)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
-            channelFuture = b.bind(port).sync();
+            channelFuture = b.bind("0.0.0.0",port).sync();
             channelFuture.channel().closeFuture().sync();
         } finally {
             stop();

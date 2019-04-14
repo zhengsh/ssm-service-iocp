@@ -18,16 +18,17 @@ public class SimuTask {
 
     private static SimuTask instance = new SimuTask();
 
-    private List<ExecutorService> executorList = new ArrayList<>(32);
+    private List<ExecutorService> executorList = new ArrayList<>(8);
 
     private final AtomicInteger connect = new AtomicInteger();
 
 
     private SimuTask() {
-        for (int i = 0; i < 32; i++) {
+        for (int i = 0; i < 8; i++) {
 
             ExecutorService executorService =
-                    ThreadPool.newThreadExecutor("simu-task-" + i, 1000, true);
+                    ThreadPool.newThreadExecutor("simu-task-" + i,
+                            100);
             executorList.add(executorService);
         }
     }
@@ -45,7 +46,7 @@ public class SimuTask {
         connect.incrementAndGet();
 
         Runnable runnable = client::start;
-        int index = new Random().nextInt(32);
+        int index = new Random().nextInt(8);
 
         ExecutorService executorService = executorList.get(index);
         if (executorService != null) {
