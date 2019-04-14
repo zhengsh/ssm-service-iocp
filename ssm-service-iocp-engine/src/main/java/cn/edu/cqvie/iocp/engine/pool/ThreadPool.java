@@ -22,7 +22,7 @@ public class ThreadPool {
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(1024),
                 new HxThreadFactory(threadNamePrefix, daemon)
-                , new ThreadPoolExecutor.AbortPolicy());
+                , new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
     /**
@@ -40,7 +40,7 @@ public class ThreadPool {
         LinkedBlockingQueue<Runnable> linkedBlockingQueue = new LinkedBlockingQueue<>(nThreads * 1000);
         nThreads = Math.max(minThreads, nThreads);
         maximumPoolSize = nThreads * 2;
-        ThreadPoolExecutor.AbortPolicy handler = new ThreadPoolExecutor.AbortPolicy();
+        ThreadPoolExecutor.CallerRunsPolicy handler = new ThreadPoolExecutor.CallerRunsPolicy();
         return new ThreadPoolExecutor(
                 nThreads,
                 maximumPoolSize,

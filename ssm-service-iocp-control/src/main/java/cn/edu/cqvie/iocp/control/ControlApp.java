@@ -67,7 +67,7 @@ public class ControlApp extends Application {
                 }
                 for (int i = 0; i < simu; i++) {
                     SimuTask.getInstance().submit(new MessageClient());
-                    Thread.sleep(100);
+                    Thread.sleep(50);
                 }
             } catch (Throwable e) {
                 e.printStackTrace();

@@ -1,7 +1,6 @@
 package cn.edu.cqvie.iocp.simu;
 
 import cn.edu.cqvie.iocp.client.MessageClient;
-import cn.edu.cqvie.iocp.engine.pool.HxThreadFactory;
 import cn.edu.cqvie.iocp.engine.pool.ThreadPool;
 
 import java.util.concurrent.*;
