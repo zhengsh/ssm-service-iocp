@@ -1,15 +1,11 @@
 package cn.edu.cqvie.iocp.control.controller;
 
-import cn.edu.cqvie.iocp.client.content.StatisticalContent;
+import cn.edu.cqvie.iocp.client.content.ControlContent;
 import cn.edu.cqvie.iocp.engine.timer.TimerManager;
 import cn.edu.cqvie.iocp.server.content.SessionContent;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-
-import java.util.TimerTask;
 
 /**
  * @author ZHENG SHAOHONG
@@ -35,7 +31,7 @@ public class MainController {
                     int conCount = instance.count();
                     labelCount.setText(String.valueOf(conCount));
 
-                    StatisticalContent instance1 = StatisticalContent.getInstance();
+                    ControlContent instance1 = ControlContent.getInstance();
                     labelTime.setText(String.valueOf(instance1.max()));
                 });
             }

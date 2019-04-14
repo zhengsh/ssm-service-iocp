@@ -15,19 +15,19 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author ZHENG SHAOHONG
  */
-public class StatisticalContent {
-    private static final Logger logger = LoggerFactory.getLogger(StatisticalContent.class);
+public class ControlContent {
+    private static final Logger logger = LoggerFactory.getLogger(ControlContent.class);
 
-    private static StatisticalContent instance = new StatisticalContent();
+    private static ControlContent instance = new ControlContent();
 
     private Map<String, AtomicInteger> contextMap = new ConcurrentHashMap<>(1024);
 
 
-    private StatisticalContent() {
+    private ControlContent() {
 
     }
 
-    public static StatisticalContent getInstance() {
+    public static ControlContent getInstance() {
         return instance;
     }
 
@@ -52,6 +52,10 @@ public class StatisticalContent {
             return 0;
         }
 
+    }
+
+    public synchronized void remove(String key) {
+        contextMap.remove(key);
     }
 
     public synchronized int max() {
