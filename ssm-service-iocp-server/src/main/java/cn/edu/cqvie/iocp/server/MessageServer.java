@@ -33,7 +33,7 @@ public class MessageServer {
     public static void start(int port) throws InterruptedException {
         int nThread = Runtime.getRuntime().availableProcessors() * 2;
         bossGroup = new NioEventLoopGroup(nThread);
-        workerGroup = new NioEventLoopGroup();
+        workerGroup = new NioEventLoopGroup(nThread);
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)

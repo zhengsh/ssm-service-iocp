@@ -21,6 +21,7 @@ public class ServiceContent {
     private Map<Short, MessageService> serviceMap = new HashMap<>();
 
     private ServiceContent() {
+        // TODO 客户端业务处理
 //        serviceMap.put(CommandEnum.A004.getCode(), new LoginServiceImpl());
 //        serviceMap.put(CommandEnum.A007.getCode(), new FailServiceImpl());
     }

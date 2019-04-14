@@ -1,5 +1,6 @@
 package cn.edu.cqvie.iocp.control.controller;
 
+import cn.edu.cqvie.iocp.client.content.StatisticalContent;
 import cn.edu.cqvie.iocp.engine.timer.TimerManager;
 import cn.edu.cqvie.iocp.server.content.SessionContent;
 import javafx.application.Platform;
@@ -18,6 +19,9 @@ public class MainController {
     @FXML
     private Label labelCount;
 
+    @FXML
+    private Label labelTime;
+
     public MainController() {
 
         // 500ms 执行一次
@@ -30,6 +34,9 @@ public class MainController {
                     SessionContent instance = SessionContent.getInstance();
                     int conCount = instance.count();
                     labelCount.setText(String.valueOf(conCount));
+
+                    StatisticalContent instance1 = StatisticalContent.getInstance();
+                    labelTime.setText(String.valueOf(instance1.max()));
                 });
             }
         }, 100, 500);
