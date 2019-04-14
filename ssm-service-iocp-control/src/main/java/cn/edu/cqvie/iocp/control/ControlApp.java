@@ -60,6 +60,7 @@ public class ControlApp extends Application {
         });
 
 
+        // 模拟客户端线程
         DamonThread.submit(() -> {
             try {
                 while (!MessageServer.isOpen()) {

@@ -15,7 +15,7 @@ public class SimuTask {
     private static SimuTask instance = new SimuTask();
 
     private ExecutorService executorService =
-            ThreadPool.newThreadExecutor("simu-task", 2000);
+            ThreadPool.newThreadExecutor("simu-task", 4000);
 
     private SimuTask() {
 

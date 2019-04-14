@@ -1,4 +1,4 @@
-package cn.edu.cqvie.iocp.server;
+package cn.edu.cqvie.iocp.server.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;

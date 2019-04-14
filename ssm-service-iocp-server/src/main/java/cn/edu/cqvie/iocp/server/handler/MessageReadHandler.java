@@ -1,4 +1,4 @@
-package cn.edu.cqvie.iocp.server;
+package cn.edu.cqvie.iocp.server.handler;
 
 import cn.edu.cqvie.iocp.engine.bean.MessageProtocol;
 import cn.edu.cqvie.iocp.server.content.ServiceContent;
@@ -7,18 +7,11 @@ import cn.edu.cqvie.iocp.server.task.TaskManager;
 import com.alibaba.fastjson.JSONObject;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelId;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.util.concurrent.GlobalEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 监听客户端
