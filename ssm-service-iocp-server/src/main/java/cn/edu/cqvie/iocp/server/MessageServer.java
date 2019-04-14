@@ -21,13 +21,11 @@ public class MessageServer {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageServer.class);
 
-
     public static void main(String[] args) throws InterruptedException {
         start();
     }
 
-    private static void start() throws InterruptedException {
-        int port = SystemConstant.SERVER_PORT;
+    public static void start(int port) throws InterruptedException {
         int nThread = Runtime.getRuntime().availableProcessors() * 2;
         EventLoopGroup bossGroup = new NioEventLoopGroup(nThread);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -45,5 +43,9 @@ public class MessageServer {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
+    }
+
+    private static void start() throws InterruptedException {
+        start(SystemConstant.SERVER_PORT);
     }
 }

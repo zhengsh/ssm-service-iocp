@@ -1,7 +1,6 @@
-package cn.edu.cqvie.iocp.server.timer;
+package cn.edu.cqvie.iocp.engine.timer;
 
 import cn.edu.cqvie.iocp.engine.pool.ThreadPool;
-import cn.edu.cqvie.iocp.server.task.TaskManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class TimerManager {
 
-    private static final Logger logger = LoggerFactory.getLogger(TaskManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(TimerManager.class);
 
     private static TimerManager instance = new TimerManager();
 
@@ -32,8 +31,10 @@ public class TimerManager {
     }
 
     public void submit(HxTimerTask timerTask) {
-        int initialDelay =  1000;
-        int period =  1000;
+        submit(timerTask, 1000, 1000);
+    }
+
+    public void submit(HxTimerTask timerTask, int initialDelay, int period) {
         scheduledExecutorService.scheduleAtFixedRate(timerTask,initialDelay,period, TimeUnit.MILLISECONDS);
 
     }

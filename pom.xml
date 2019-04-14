@@ -13,6 +13,8 @@
         <module>ssm-service-iocp-engine</module>
         <module>ssm-service-iocp-server</module>
         <module>ssm-service-iocp-client</module>
+        <module>ssm-service-iocp-control</module>
+        <module>ssm-service-iocp-simu</module>
     </modules>
 
 
