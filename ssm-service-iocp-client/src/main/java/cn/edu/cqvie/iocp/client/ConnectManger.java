@@ -16,6 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 连接管理器
+ * @author ZHENG SHAOHONG
+ */
 public class ConnectManger {
 
     private static final Logger logger = LoggerFactory.getLogger(ConnectManger.class);
@@ -52,7 +56,7 @@ public class ConnectManger {
                             pipeline.addLast(new MessageEncoder());
                             pipeline.addLast(new MessageDecoder());
 
-                            pipeline.addLast(new IdleStateHandler(60, 60, 180, TimeUnit.SECONDS));
+                            pipeline.addLast(new IdleStateHandler(2, 2, 10, TimeUnit.SECONDS));
                             pipeline.addLast(new MessageClientHandler());
                         }
                     });

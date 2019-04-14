@@ -13,6 +13,8 @@
         <module>ssm-service-iocp-engine</module>
         <module>ssm-service-iocp-server</module>
         <module>ssm-service-iocp-client</module>
+        <module>ssm-service-iocp-control</module>
+        <module>ssm-service-iocp-simu</module>
     </modules>
 
 
@@ -26,6 +28,7 @@
         <disruptor.version>3.3.4</disruptor.version>
         <lombok.version>1.16.10</lombok.version>
         <fastjson.version>1.2.41</fastjson.version>
+        <redisson.version>3.10.6</redisson.version>
     </properties>
 
     <dependencies>
@@ -77,6 +80,16 @@
             <version>${fastjson.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>${redisson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-epoll</artifactId>
+            <version>${netty.io.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -12,6 +12,58 @@ import java.util.concurrent.*;
 public class ThreadPool {
 
     /**
+     * 单线程的线程池
+     *
+     * @param threadNamePrefix
+     * @return
+     */
+    public static ExecutorService newSingleThread(String threadNamePrefix, boolean daemon) {
+        return new ThreadPoolExecutor(1, 1,
+                0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(1024),
+                new HxThreadFactory(threadNamePrefix, daemon)
+                , new ThreadPoolExecutor.CallerRunsPolicy());
+    }
+
+    /**
+     * 创建线程池
+     *
+     * @param threadNamePrefix 线程名称前缀
+     * @param nThreads         线程数量
+     * @param daemon           是否是后台线程
+     * @return
+     */
+    public static ExecutorService newThreadExecutor(String threadNamePrefix, int nThreads, boolean daemon) {
+        int minThreads = 2;
+        long keepAliveTime = 30L;
+        int maximumPoolSize;
+        LinkedBlockingQueue<Runnable> linkedBlockingQueue = new LinkedBlockingQueue<>(nThreads * 1000);
+        nThreads = Math.max(minThreads, nThreads);
+        maximumPoolSize = nThreads * 2;
+        ThreadPoolExecutor.CallerRunsPolicy handler = new ThreadPoolExecutor.CallerRunsPolicy();
+        return new ThreadPoolExecutor(
+                nThreads,
+                maximumPoolSize,
+                keepAliveTime,
+                TimeUnit.MILLISECONDS,
+                linkedBlockingQueue,
+                new HxThreadFactory(threadNamePrefix, daemon),
+                handler);
+    }
+
+
+    /**
+     * 创建线程池
+     *
+     * @param threadNamePrefix 线程名称前缀
+     * @param nThreads         线程数量
+     * @return
+     */
+    public static ExecutorService newThreadExecutor(String threadNamePrefix, int nThreads) {
+        return newThreadExecutor(threadNamePrefix, nThreads, false);
+    }
+
+    /**
      * 创建线程池
      *
      * @param threadNamePrefix 线程名称前缀
@@ -19,30 +71,21 @@ public class ThreadPool {
      */
     public static ExecutorService newThreadExecutor(String threadNamePrefix) {
         int nThreads = Runtime.getRuntime().availableProcessors() * 2;
-        int minThreads = 2;
-        long keepAliveTime = 30L;
-        int maximumPoolSize;
-        LinkedBlockingQueue<Runnable> linkedBlockingQueue = new LinkedBlockingQueue<>(nThreads * 1000);
-        nThreads = Math.max(minThreads, nThreads);
-        maximumPoolSize = nThreads * 2;
-        ThreadFactory threadFactory = new ThreadFactory() {
-            int number = 1;
-
-            @Override
-            public Thread newThread(Runnable r) {
-                return new Thread(r, threadNamePrefix + "-pool-" + number++);
-            }
-        };
-        ThreadPoolExecutor.AbortPolicy handler = new ThreadPoolExecutor.AbortPolicy();
-        return new ThreadPoolExecutor(
-                nThreads,
-                maximumPoolSize,
-                keepAliveTime,
-                TimeUnit.MILLISECONDS,
-                linkedBlockingQueue,
-                threadFactory,
-                handler);
+        return newThreadExecutor(threadNamePrefix, nThreads);
     }
+
+    /**
+     * 创建线程池
+     *
+     * @param threadNamePrefix 线程名称前缀
+     * @return
+     */
+    public static ScheduledExecutorService newScheduledExecutor(String threadNamePrefix) {
+        int nThreads = Runtime.getRuntime().availableProcessors() * 2;
+
+        return new ScheduledThreadPoolExecutor(nThreads, new HxThreadFactory(threadNamePrefix));
+    }
+
 
     public static void main(String[] args) throws InterruptedException {
         ExecutorService executorService = newThreadExecutor("zhangsan");

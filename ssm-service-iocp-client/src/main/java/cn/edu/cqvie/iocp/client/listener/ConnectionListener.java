@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 负责监听启动时连接失败，重新连接功能
  *
- * @author yinjihuan
+ * @author ZHENG SHAOHONG
  */
 public class ConnectionListener implements ChannelFutureListener {
 

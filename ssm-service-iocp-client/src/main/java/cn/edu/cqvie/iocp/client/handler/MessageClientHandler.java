@@ -1,6 +1,7 @@
 package cn.edu.cqvie.iocp.client.handler;
 
 import cn.edu.cqvie.iocp.client.ConnectManger;
+import cn.edu.cqvie.iocp.client.content.StatisticalContent;
 import cn.edu.cqvie.iocp.engine.bean.MessageProtocol;
 import cn.edu.cqvie.iocp.engine.bean.dto.MessageDTO;
 import cn.edu.cqvie.iocp.engine.bean.dto.UserDTO;
@@ -21,12 +22,19 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 消息客户端
+ *
+ * @author ZHENG SHAOHONG
+ */
 public class MessageClientHandler extends SimpleChannelInboundHandler<MessageProtocol> {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageClientHandler.class);
 
     private int count;
     private int serialNum = 1;
+    private long loginTime;
+    private long messageTime;
 
     private final String username = "zhangsan";
     private final String password = "password";
@@ -46,6 +54,7 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
 
         if (ctx.channel().isActive()) {
             ctx.writeAndFlush(protocol);
+            loginTime = System.currentTimeMillis();
             message.put(serialNum, CommandEnum.A004);
         }
 
@@ -82,12 +91,14 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
         logger.info("客户端接收到的消息数量：{}", ++this.count);
 
         try {
+
             // 登录成功
             if (message.containsKey(msg.getPacketNo())) {
 
+                StatisticalContent instance = StatisticalContent.getInstance();
+
                 CommandEnum commandEnum = message.get(msg.getPacketNo());
                 if (commandEnum.equals(CommandEnum.A004)) {
-
                     // 登录成功
                     logger.info("login success");
 
@@ -95,6 +106,7 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
                     MessageDTO dto = new MessageDTO();
                     dto.setCode(username);
                     dto.setContent("this is a test message send to " + username);
+                    instance.set(username, (int) (System.currentTimeMillis() - loginTime));
 
                     int serialNum = ++this.serialNum;
                     MessageProtocol protocol = new MessageProtocol(
@@ -107,12 +119,14 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
                     if (ctx.channel().isActive()) {
                         ctx.writeAndFlush(protocol);
                         message.put(serialNum, CommandEnum.A008);
+                        messageTime = System.currentTimeMillis();
                     }
 
                 } else if (commandEnum.equals(CommandEnum.A008)) {
 
                     // 消息发送成功
                     logger.info("message send success");
+                    instance.set(username, (int) (System.currentTimeMillis() - messageTime));
 
                 }
             }

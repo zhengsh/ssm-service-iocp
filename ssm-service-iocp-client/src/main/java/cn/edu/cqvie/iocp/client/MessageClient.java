@@ -12,31 +12,33 @@ import java.util.concurrent.locks.ReentrantLock;
 public class MessageClient {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageClient.class);
-
-    private static final ReentrantLock LOCK = new ReentrantLock();
-    private static final Condition STOP = LOCK.newCondition();
+    private final ReentrantLock lock = new ReentrantLock();
+    private final Condition stop = lock.newCondition();
 
     public static void main(String[] args) {
+        new MessageClient().start();
+    }
+
+    public void start() {
         ConnectManger messageClient = ConnectManger.getInstance();
         messageClient.start();
         logger.info("service start success !~");
         addHook(messageClient);
         //主线程阻塞等待，守护线程释放锁后退出
         try {
-            LOCK.lock();
-            STOP.await();
+            lock.lock();
+            stop.await();
         } catch (InterruptedException e) {
             logger.warn(" service   stopped, interrupted by other thread!", e);
         } finally {
-            LOCK.unlock();
+            lock.unlock();
         }
     }
 
     /**
-     *
      * @param manger
      */
-    private static void addHook(ConnectManger manger) {
+    private void addHook(ConnectManger manger) {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 manger.stop();
@@ -45,10 +47,10 @@ public class MessageClient {
             }
             logger.info("jvm exit, all service stopped.");
             try {
-                LOCK.lock();
-                STOP.signal();
+                lock.lock();
+                stop.signal();
             } finally {
-                LOCK.unlock();
+                lock.unlock();
             }
         }, "MessageClient-shutdown-hook"));
     }
