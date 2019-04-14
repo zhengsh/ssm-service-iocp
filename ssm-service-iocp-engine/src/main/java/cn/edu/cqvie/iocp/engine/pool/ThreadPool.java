@@ -11,14 +11,7 @@ import java.util.concurrent.*;
  */
 public class ThreadPool {
 
-    /**
-     * 创建线程池
-     *
-     * @param threadNamePrefix 线程名称前缀
-     * @return
-     */
-    public static ExecutorService newThreadExecutor(String threadNamePrefix) {
-        int nThreads = Runtime.getRuntime().availableProcessors() * 2;
+    public static ExecutorService newThreadExecutor(String threadNamePrefix, int nThreads) {
         int minThreads = 2;
         long keepAliveTime = 30L;
         int maximumPoolSize;
@@ -34,6 +27,17 @@ public class ThreadPool {
                 linkedBlockingQueue,
                 new HxThreadFactory(threadNamePrefix),
                 handler);
+    }
+
+    /**
+     * 创建线程池
+     *
+     * @param threadNamePrefix 线程名称前缀
+     * @return
+     */
+    public static ExecutorService newThreadExecutor(String threadNamePrefix) {
+        int nThreads = Runtime.getRuntime().availableProcessors() * 2;
+        return newThreadExecutor(threadNamePrefix, nThreads);
     }
 
     /**

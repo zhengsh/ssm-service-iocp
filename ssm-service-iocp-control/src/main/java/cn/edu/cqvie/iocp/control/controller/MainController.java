@@ -1,6 +1,7 @@
 package cn.edu.cqvie.iocp.control.controller;
 
 import cn.edu.cqvie.iocp.engine.timer.TimerManager;
+import cn.edu.cqvie.iocp.server.content.SessionContent;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -26,7 +27,9 @@ public class MainController {
             @Override
             public void run() {
                 Platform.runLater(() -> {
-                    labelCount.setText(String.valueOf(i++));
+                    SessionContent instance = SessionContent.getInstance();
+                    int conCount = instance.count();
+                    labelCount.setText(String.valueOf(conCount));
                 });
             }
         }, 100, 500);

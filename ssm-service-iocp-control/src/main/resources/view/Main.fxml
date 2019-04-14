@@ -9,7 +9,8 @@
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.edu.cqvie.iocp.control.controller.MainController">
     <center>
         <Label
-                prefHeight="45.0" prefWidth="389.0" style="-fx-font: 40em;" text="0" textFill="#4e72fc"
+                prefHeight="45.0" prefWidth="389.0"
+                text="0" textFill="#4e72fc"
                 fx:id="labelCount"
                 BorderPane.alignment="CENTER">
             <opaqueInsets>

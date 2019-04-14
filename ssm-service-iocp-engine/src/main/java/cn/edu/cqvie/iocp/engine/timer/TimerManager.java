@@ -34,6 +34,12 @@ public class TimerManager {
         submit(timerTask, 1000, 1000);
     }
 
+    /**
+     * 提交定时任务
+     * @param timerTask    定时任务
+     * @param initialDelay 初始化延迟，单位:ms
+     * @param period       执行间隔，单位:ms
+     */
     public void submit(HxTimerTask timerTask, int initialDelay, int period) {
         scheduledExecutorService.scheduleAtFixedRate(timerTask,initialDelay,period, TimeUnit.MILLISECONDS);
 

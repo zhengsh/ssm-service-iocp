@@ -21,14 +21,19 @@ public class MessageServer {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageServer.class);
 
+    private static EventLoopGroup bossGroup;
+    private static EventLoopGroup workerGroup;
+    private static ChannelFuture channelFuture;
+
     public static void main(String[] args) throws InterruptedException {
         start();
     }
 
+
     public static void start(int port) throws InterruptedException {
         int nThread = Runtime.getRuntime().availableProcessors() * 2;
-        EventLoopGroup bossGroup = new NioEventLoopGroup(nThread);
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        bossGroup = new NioEventLoopGroup(nThread);
+        workerGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
@@ -37,15 +42,27 @@ public class MessageServer {
                     .childHandler(new MessageChannelInitializer())
                     .option(ChannelOption.SO_BACKLOG, 4096)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
-            ChannelFuture f = b.bind(port).sync();
-            f.channel().closeFuture().sync();
+            channelFuture = b.bind(port).sync();
+            channelFuture.channel().closeFuture().sync();
         } finally {
-            workerGroup.shutdownGracefully();
-            bossGroup.shutdownGracefully();
+            stop();
         }
     }
 
-    private static void start() throws InterruptedException {
+    public static void start() throws InterruptedException {
         start(SystemConstant.SERVER_PORT);
+    }
+
+    public static boolean isOpen() {
+        if (null != channelFuture && channelFuture.channel() != null) {
+            return channelFuture.channel().isOpen();
+        } else {
+            return false;
+        }
+    }
+
+    public static void stop() {
+        workerGroup.shutdownGracefully();
+        bossGroup.shutdownGracefully();
     }
 }

@@ -56,4 +56,8 @@ public class SessionContent {
         }
         return this;
     }
+
+    public synchronized int count() {
+        return channelGroup.size();
+    }
 }
