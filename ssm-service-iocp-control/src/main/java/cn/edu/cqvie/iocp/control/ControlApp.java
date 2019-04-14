@@ -32,7 +32,7 @@ public class ControlApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("view/Main.fxml"));
-        Scene scene = new Scene(root, 500, 160);
+        Scene scene = new Scene(root, 600, 160);
 
         Properties properties = new Properties();
         InputStream in = ControlApp.class.getClassLoader().getResourceAsStream("control.properties");
@@ -61,19 +61,22 @@ public class ControlApp extends Application {
 
 
         // 模拟客户端线程
-        DamonThread.submit(() -> {
-            try {
-                while (!MessageServer.isOpen()) {
-                    Thread.sleep(500);
+        for (int j = 0; j < 16; j++) {
+            DamonThread.submit(() -> {
+                try {
+                    while (!MessageServer.isOpen()) {
+                        Thread.sleep(500);
+                    }
+                    for (int i = 0; i < simu; i++) {
+                        SimuTask.getInstance().submit(new MessageClient());
+                        Thread.sleep(10);
+                    }
+                } catch (Throwable e) {
+                    e.printStackTrace();
                 }
-                for (int i = 0; i < simu; i++) {
-                    SimuTask.getInstance().submit(new MessageClient());
-                    Thread.sleep(50);
-                }
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        });
+            });
+        }
+
     }
 
     /**
@@ -81,11 +84,11 @@ public class ControlApp extends Application {
      */
     private static class DamonThread {
 
-        public static void submit(Runnable t) {
+        static void submit(Runnable t) {
             newThread(t).start();
         }
 
-        public static Thread newThread(Runnable t) {
+        static Thread newThread(Runnable t) {
             Thread thread = new Thread(t, "message-server");
             thread.setDaemon(true);
             return thread;
