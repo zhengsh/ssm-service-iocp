@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,7 +60,7 @@ public class ControlContent {
     }
 
     public synchronized int max() {
-        return contextMap.values().stream().map(AtomicInteger::get).max(Integer::max).get();
+        return contextMap.values().stream().map(AtomicInteger::get).max(Comparator.naturalOrder()).orElse(0);
     }
 
     @Getter
