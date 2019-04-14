@@ -10,7 +10,7 @@ public class SystemConstant {
     /**
      * 客户端是否发送心跳
      */
-    public static final boolean HEARTBEAT = false;
+    public static final boolean HEARTBEAT = true;
 
     /**
      * 服务器地址

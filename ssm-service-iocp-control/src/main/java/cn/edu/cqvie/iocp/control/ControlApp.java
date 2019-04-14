@@ -61,18 +61,16 @@ public class ControlApp extends Application {
 
 
         DamonThread.submit(() -> {
-            for (; ; ) {
-                try {
-                    if (MessageServer.isOpen()) {
-                        break;
-                    }
+            try {
+                while (!MessageServer.isOpen()) {
                     Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
-            }
-            for (int i = 0; i < simu; i++) {
-                SimuTask.getInstance().submit(new MessageClient());
+                for (int i = 0; i < simu; i++) {
+                    SimuTask.getInstance().submit(new MessageClient());
+                    Thread.sleep(100);
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
             }
         });
     }
