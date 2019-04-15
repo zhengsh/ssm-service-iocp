@@ -14,10 +14,14 @@ import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
  * 连接管理器
+ *
  * @author ZHENG SHAOHONG
  */
 public class ConnectManger {
@@ -25,8 +29,8 @@ public class ConnectManger {
     private static final Logger logger = LoggerFactory.getLogger(ConnectManger.class);
 
     private static ConnectManger instance = new ConnectManger();
-    private Channel channel;
     EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
+    private List<Channel> channels = new ArrayList<>(256);
 
     private ConnectManger() {
 
@@ -36,10 +40,6 @@ public class ConnectManger {
         return instance;
     }
 
-
-    public static void init() {
-
-    }
 
     public void start() {
         String host = SystemConstant.SERVER_HOST;
@@ -61,10 +61,15 @@ public class ConnectManger {
                         }
                     });
 
-            ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
-            this.channel = channelFuture.channel();
-            channelFuture.addListener(new ConnectionListener());
-            channelFuture.channel().closeFuture().sync();
+            // 一个终端200个连接
+            for (int i = 0; i < 200; i++) {
+                ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
+                channels.add(channelFuture.channel());
+                channelFuture.addListener(new ConnectionListener());
+
+                Thread.sleep(10);
+            }
+
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -72,8 +77,12 @@ public class ConnectManger {
 
     public void stop() {
         try {
-            if (channel != null && channel.isActive()) {
-                channel.closeFuture().sync();
+            if (channels != null && channels.size() > 0) {
+                for (Channel channel : channels) {
+                    if (channel != null && channel.isOpen()) {
+                        channel.closeFuture().sync();
+                    }
+                }
             }
             eventLoopGroup.shutdownGracefully();
         } catch (Throwable t) {

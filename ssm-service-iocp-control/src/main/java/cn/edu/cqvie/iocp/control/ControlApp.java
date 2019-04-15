@@ -32,7 +32,7 @@ public class ControlApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("view/Main.fxml"));
-        Scene scene = new Scene(root, 500, 160);
+        Scene scene = new Scene(root, 666, 160);
 
         Properties properties = new Properties();
         InputStream in = ControlApp.class.getClassLoader().getResourceAsStream("control.properties");
@@ -50,6 +50,7 @@ public class ControlApp extends Application {
             }
         });
 
+        // 模拟客户端线程
         primaryStage.setTitle("message control : " + port);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -58,7 +59,6 @@ public class ControlApp extends Application {
             MessageServer.stop();
             logger.info("message server is stop");
         });
-
 
         DamonThread.submit(() -> {
             try {
@@ -80,11 +80,11 @@ public class ControlApp extends Application {
      */
     private static class DamonThread {
 
-        public static void submit(Runnable t) {
+        static void submit(Runnable t) {
             newThread(t).start();
         }
 
-        public static Thread newThread(Runnable t) {
+        static Thread newThread(Runnable t) {
             Thread thread = new Thread(t, "message-server");
             thread.setDaemon(true);
             return thread;

@@ -1,6 +1,7 @@
 package cn.edu.cqvie.iocp.server;
 
 import cn.edu.cqvie.iocp.engine.constant.SystemConstant;
+import cn.edu.cqvie.iocp.engine.pool.ThreadPool;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -33,7 +34,8 @@ public class MessageServer {
     public static void start(int port) throws InterruptedException {
         int nThread = Runtime.getRuntime().availableProcessors() * 2;
         bossGroup = new NioEventLoopGroup(nThread);
-        workerGroup = new NioEventLoopGroup(nThread);
+        workerGroup = new NioEventLoopGroup(nThread,
+                ThreadPool.newThreadExecutor("worker-group", 4000));
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
@@ -42,7 +44,7 @@ public class MessageServer {
                     .childHandler(new MessageChannelInitializer())
                     .option(ChannelOption.SO_BACKLOG, 4096)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
-            channelFuture = b.bind(port).sync();
+            channelFuture = b.bind("0.0.0.0",port).sync();
             channelFuture.channel().closeFuture().sync();
         } finally {
             stop();
