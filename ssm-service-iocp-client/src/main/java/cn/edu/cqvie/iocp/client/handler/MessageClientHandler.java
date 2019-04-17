@@ -2,7 +2,6 @@ package cn.edu.cqvie.iocp.client.handler;
 
 import cn.edu.cqvie.iocp.client.ConnectManger;
 import cn.edu.cqvie.iocp.client.content.ControlContent;
-import cn.edu.cqvie.iocp.client.content.ServiceContent;
 import cn.edu.cqvie.iocp.engine.bean.MessageProtocol;
 import cn.edu.cqvie.iocp.engine.bean.dto.MessageDTO;
 import cn.edu.cqvie.iocp.engine.bean.dto.UserDTO;
@@ -35,15 +34,14 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
 
     private int count;
     private int serialNum = 1;
-    private long loginTime;
-    private long messageTime;
 
     private final String username = uuid();
-    private Map<Integer, CommandEnum> message = new ConcurrentHashMap<>();
+    private volatile Map<Integer, CommandEnum> message = new ConcurrentHashMap<>();
+    private volatile Map<String, Long> controlMap = new ConcurrentHashMap<>();
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        logger.info("通道已连接！！");
+        logger.error("通道已连接, object: {}", this);
 
         int serialNum = ++this.serialNum;
         String password = "password";
@@ -56,8 +54,8 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
 
         if (ctx.channel().isActive()) {
             ctx.writeAndFlush(protocol);
-            loginTime = System.currentTimeMillis();
             message.put(serialNum, CommandEnum.A004);
+            controlMap.put(username.concat("1004"), System.currentTimeMillis());
         }
 
     }
@@ -103,20 +101,24 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
 
             // 登录成功
             if (message.containsKey(msg.getPacketNo())) {
-
                 ControlContent instance = ControlContent.getInstance();
-
                 CommandEnum commandEnum = message.get(msg.getPacketNo());
+
                 if (commandEnum.equals(CommandEnum.A004)) {
                     // 登录成功
                     logger.info("login success");
 
-                    //todo 发送业务指令
                     MessageDTO dto = new MessageDTO();
                     dto.setCode(username);
                     dto.setContent("this is a test message send to " + username);
-                    instance.set(username, (int) (System.currentTimeMillis() - loginTime));
 
+                    String k = username.concat("1004");
+                    if (controlMap.containsKey(k)) {
+                        instance.set(username, (int) (System.currentTimeMillis() - controlMap.get(k)));
+                        controlMap.remove(k);
+                    }
+
+                    // 推送
                     int serialNum = ++this.serialNum;
                     MessageProtocol protocol = new MessageProtocol(
                             serialNum,
@@ -128,15 +130,18 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
                     if (ctx.channel().isActive()) {
                         ctx.writeAndFlush(protocol);
                         message.put(serialNum, CommandEnum.A008);
-                        messageTime = System.currentTimeMillis();
-                    }
+                        controlMap.put(username.concat("1008"), System.currentTimeMillis());
 
+                    }
                 } else if (commandEnum.equals(CommandEnum.A008)) {
 
                     // 消息发送成功
                     logger.info("message send success");
-                    instance.set(username, (int) (System.currentTimeMillis() - messageTime));
-
+                    String k = username.concat("1008");
+                    if (controlMap.containsKey(k)) {
+                        instance.set(username, (int) (System.currentTimeMillis() - controlMap.get(k)));
+                        controlMap.remove(k);
+                    }
                 }
             }
         } catch (Throwable t) {

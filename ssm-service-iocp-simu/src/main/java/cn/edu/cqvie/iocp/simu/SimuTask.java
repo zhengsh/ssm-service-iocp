@@ -3,10 +3,7 @@ package cn.edu.cqvie.iocp.simu;
 import cn.edu.cqvie.iocp.client.MessageClient;
 import cn.edu.cqvie.iocp.engine.pool.ThreadPool;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -18,19 +15,11 @@ public class SimuTask {
 
     private static SimuTask instance = new SimuTask();
 
-    private List<ExecutorService> executorList = new ArrayList<>(8);
-
+    private ExecutorService executorService = ThreadPool.newThreadExecutor("simu-task", 40);
     private final AtomicInteger connect = new AtomicInteger();
 
 
     private SimuTask() {
-        for (int i = 0; i < 8; i++) {
-
-            ExecutorService executorService =
-                    ThreadPool.newThreadExecutor("simu-task-" + i,
-                            100);
-            executorList.add(executorService);
-        }
     }
 
     public static SimuTask getInstance() {
@@ -38,7 +27,6 @@ public class SimuTask {
     }
 
     public synchronized int count() {
-        //return executorList.stream().mapToInt(item -> ((ThreadPoolExecutor) item).getActiveCount()).sum();
         return connect.get();
     }
 
@@ -46,17 +34,6 @@ public class SimuTask {
         connect.incrementAndGet();
 
         Runnable runnable = client::start;
-        int index = new Random().nextInt(8);
-
-        ExecutorService executorService = executorList.get(index);
-        if (executorService != null) {
-            // 提交客户端连接
-            executorService.submit(runnable);
-        } else {
-            executorService = executorList.get(0);
-            executorService.submit(runnable);
-        }
-
-
+        executorService.submit(runnable);
     }
 }
