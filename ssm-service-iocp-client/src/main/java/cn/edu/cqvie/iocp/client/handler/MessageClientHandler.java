@@ -35,17 +35,14 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
 
     private int count;
     private int serialNum = 1;
-
-    private final String username = uuid();
-
-    private Map<String, Long> controlMap = new ConcurrentHashMap<>();
-    private Map<Integer, CommandEnum> message = new ConcurrentHashMap<>();
+    private String username;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         logger.error("通道已连接, object: {}", this);
 
         int serialNum = this.serialNum++;
+        this.username = UUID.randomUUID().toString().replace("-", "");
         String password = "password";
         MessageProtocol protocol = new MessageProtocol(
                 serialNum,
@@ -56,14 +53,8 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
 
         if (ctx.channel().isActive()) {
             ctx.writeAndFlush(protocol);
-            message.put(serialNum, CommandEnum.A004);
-            controlMap.put(username.concat("1004"), System.currentTimeMillis());
         }
 
-    }
-
-    private String uuid() {
-        return UUID.randomUUID().toString().replace("-", "");
     }
 
     @Override
@@ -83,7 +74,6 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
         logger.info("断线了。。。。。。");
         //使用过程中断线重连
         ControlContent instance = ControlContent.getInstance();
-        instance.remove(username);
 
         final EventLoop eventLoop = ctx.channel().eventLoop();
         eventLoop.schedule(() -> {
@@ -95,68 +85,43 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageProtocol msg) throws Exception {
         logger.info("客户端接收到的消息内容：{}", JSONObject.toJSONString(msg));
-        logger.info("长度：{}", msg.getLength());
-        logger.info("内容：{}", msg.getData());
         logger.info("客户端接收到的消息数量：{}", ++this.count);
 
         try {
 
-            // 登录成功
-            if (message.containsKey(msg.getPacketNo())) {
-                ControlContent instance = ControlContent.getInstance();
-                CommandEnum commandEnum = message.get(msg.getPacketNo());
+            // 如果是应答
+            if (msg.getDirection() == DirectionEnum.ANSWER.getCode()) {
+                short command = msg.getCommand();
 
-                if (commandEnum.equals(CommandEnum.A004)) {
-                    // 登录成功
-                    logger.info("login success");
+                if (command == CommandEnum.A004.getCode()) {
 
-                    MessageDTO dto = new MessageDTO();
-                    dto.setCode(username);
-                    dto.setContent("this is a test message send to " + username);
-
-                    String k = username.concat("1004");
-                    if (controlMap.containsKey(k)) {
-                        instance.set(username, (int) (System.currentTimeMillis() - controlMap.get(k)));
-                        controlMap.remove(k);
-                    }
-
-                    // 推送
-                    int serialNum = ++this.serialNum;
-                    MessageProtocol protocol = new MessageProtocol(
-                            serialNum,
-                            DirectionEnum.REQUEST.getCode(),
-                            CommandEnum.A008.getCode(),
-                            dto
-                    );
-
+                    // 登录成功推送消息给自己
                     if (ctx.channel().isActive()) {
+                        MessageDTO dto = new MessageDTO();
+                        dto.setCode(username);
+                        dto.setContent("this is a test message send to " + username);
+
+                        // 推送
+                        int serialNum = ++this.serialNum;
+                        MessageProtocol protocol = new MessageProtocol(
+                                serialNum,
+                                DirectionEnum.REQUEST.getCode(),
+                                CommandEnum.A008.getCode(),
+                                dto
+                        );
+
                         ctx.writeAndFlush(protocol);
-                        message.put(serialNum, CommandEnum.A008);
-                        controlMap.put(username.concat("1008"), System.currentTimeMillis());
-
                     }
-                } else if (commandEnum.equals(CommandEnum.A008)) {
 
-                    // 消息发送成功
-                    logger.info("message send success");
-                    String k = username.concat("1008");
-                    if (controlMap.containsKey(k)) {
-                        instance.set(username, (int) (System.currentTimeMillis() - controlMap.get(k)));
-                        controlMap.remove(k);
-                    }
+                } else if (command == CommandEnum.A008.getCode()) {
+                    // todo 消息发送成功处理
                 }
             }
         } catch (Throwable t) {
-            logger.error("fail message: {}", t);
+            logger.error("channelRead0 fail:", t);
             throw t;
-        } finally {
-            // 如果是应答就delete key
-            if (msg.getDirection() == DirectionEnum.ANSWER.getCode()) {
-                message.remove(msg.getPacketNo());
-            }
         }
     }
-
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
