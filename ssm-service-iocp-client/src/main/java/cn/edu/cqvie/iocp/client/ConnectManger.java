@@ -62,7 +62,7 @@ public class ConnectManger {
                     });
 
             // 一个终端200个连接
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 1024; i++) {
                 ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
                 channels.add(channelFuture.channel());
                 channelFuture.addListener(new ConnectionListener());

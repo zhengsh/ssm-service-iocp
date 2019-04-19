@@ -1,7 +1,10 @@
 package cn.edu.cqvie.iocp.client.codec;
 
+import cn.edu.cqvie.iocp.client.content.ControlContent;
+import cn.edu.cqvie.iocp.client.content.SessionContent;
 import cn.edu.cqvie.iocp.engine.bean.MessageProtocol;
 import cn.edu.cqvie.iocp.engine.em.DecodeStateEnum;
+import cn.edu.cqvie.iocp.engine.em.DirectionEnum;
 import cn.edu.cqvie.iocp.engine.util.ByteUtil;
 import cn.edu.cqvie.iocp.engine.util.CRC16;
 import io.netty.buffer.ByteBuf;
@@ -11,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 解码器
@@ -77,6 +81,21 @@ public class MessageDecoder extends ReplayingDecoder<DecodeStateEnum> {
             logger.info("encode MessageProtocol:{}", protocol);
 
             out.add(protocol);
+
+            if (protocol.getDirection() == DirectionEnum.ANSWER.getCode()) {
+                SessionContent instance = SessionContent.getInstance();
+                String k = ctx.channel().id().asLongText().concat(String.valueOf(protocol.getPacketNo()));
+
+                Map<String, Long> session = instance.getSession();
+                if (session.containsKey(k)) {
+                    long start = session.get(k);
+
+                    ControlContent controlContent = ControlContent.getInstance();
+                    controlContent.set(k, (int) (System.currentTimeMillis() - start));
+
+                    session.remove(k);
+                }
+            }
         } catch (Throwable t) {
             logger.error("decode fail", t);
             throw t;

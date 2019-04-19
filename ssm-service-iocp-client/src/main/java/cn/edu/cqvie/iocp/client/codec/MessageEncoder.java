@@ -1,6 +1,9 @@
 package cn.edu.cqvie.iocp.client.codec;
 
+import cn.edu.cqvie.iocp.client.content.ControlContent;
+import cn.edu.cqvie.iocp.client.content.SessionContent;
 import cn.edu.cqvie.iocp.engine.bean.MessageProtocol;
+import cn.edu.cqvie.iocp.engine.em.DirectionEnum;
 import cn.edu.cqvie.iocp.engine.util.ByteUtil;
 import cn.edu.cqvie.iocp.engine.util.CRC16;
 import cn.edu.cqvie.iocp.engine.util.StringUtil;
@@ -53,5 +56,10 @@ public class MessageEncoder extends MessageToByteEncoder<MessageProtocol> {
 
         logger.info("encode haxString:{}", ByteUtil.byteArrayToHexString(packet));
         out.writeBytes(packet);
+
+        if (msg.getDirection() == DirectionEnum.REQUEST.getCode()) {
+            SessionContent instance = SessionContent.getInstance();
+            instance.getSession().put(ctx.channel().id().asLongText().concat(String.valueOf(msg.getPacketNo())), System.currentTimeMillis());
+        }
     }
 }

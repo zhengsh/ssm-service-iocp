@@ -1,8 +1,6 @@
 package cn.edu.cqvie.iocp.client.content;
 
 
-import lombok.Getter;
-import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +20,6 @@ public class ControlContent {
     private static ControlContent instance = new ControlContent();
 
     private Map<String, AtomicInteger> contextMap = new ConcurrentHashMap<>(1024);
-
 
     private ControlContent() {
 
@@ -61,11 +58,5 @@ public class ControlContent {
 
     public synchronized int max() {
         return contextMap.values().stream().map(AtomicInteger::get).max(Comparator.naturalOrder()).orElse(0);
-    }
-
-    @Getter
-    @Setter
-    public static class SessionContext {
-        private AtomicInteger maxnum;
     }
 }
