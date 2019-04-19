@@ -72,16 +72,12 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageProto
 
         logger.info("服务端接收到的消息数量：{}", (++this.count));
 
-        TaskManager.getInstance().submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    logger.info("executors.execute invoke!");
-                    ServiceContent instance = ServiceContent.getInstance();
-                    instance.get(msg.getCommand()).dispose(ctx, msg);
-                } catch (Throwable t) {
-                    logger.error("channelRead task err {}", t);
-                }
+        TaskManager.getInstance().submit(() -> {
+            try {
+                ServiceContent instance = ServiceContent.getInstance();
+                instance.get(msg.getCommand()).dispose(ctx, msg);
+            } catch (Throwable t) {
+                logger.error("server channelRead task err", t);
             }
         });
 

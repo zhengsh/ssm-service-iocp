@@ -114,8 +114,18 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
                     }
 
                 } else if (command == CommandEnum.A008.getCode()) {
-                    // todo 消息发送成功处理
+
+                    // 收消息后ask
+                    MessageProtocol protocol = new MessageProtocol(
+                            msg.getPacketNo(),
+                            DirectionEnum.ANSWER.getCode(),
+                            CommandEnum.A008.getCode(),
+                            "ok"
+                    );
+                    ctx.writeAndFlush(protocol);
+
                 }
+
             }
         } catch (Throwable t) {
             logger.error("channelRead0 fail:", t);
@@ -131,21 +141,16 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state().equals(IdleState.READER_IDLE)) {
                 logger.info("长期没收到服务器推送数据");
-                //可以选择重新连接
             } else if (event.state().equals(IdleState.WRITER_IDLE)) {
-                logger.info("长期未向服务器发送数据, 客户端发送心跳信息");
                 if (SystemConstant.HEARTBEAT) {
-                    //发送心跳包
-                    Map<String, String> map = new HashMap<>();
-                    map.put("name", "heartbeat");
-
                     MessageProtocol protocol = new MessageProtocol(
                             1,
                             DirectionEnum.ANSWER.getCode(),
                             CommandEnum.A006.getCode(),
-                            map
+                            "heartbeat"
                     );
                     ctx.writeAndFlush(protocol);
+                    logger.info("长期未向服务器发送数据, 客户端发送心跳信息");
                 }
 
             } else if (event.state().equals(IdleState.ALL_IDLE)) {

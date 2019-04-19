@@ -20,7 +20,6 @@ public class MessageClient {
     public void start() {
         ConnectManger messageClient = ConnectManger.getInstance();
         messageClient.start();
-        logger.info("service start success !~");
         for (;;) {
             try {
                 Thread.sleep(500);
@@ -40,7 +39,6 @@ public class MessageClient {
             } catch (Exception e) {
                 logger.error("MessageClient stop exception ", e);
             }
-            logger.info("jvm exit, all service stopped.");
         }, "MessageClient-shutdown-hook"));
     }
 }
