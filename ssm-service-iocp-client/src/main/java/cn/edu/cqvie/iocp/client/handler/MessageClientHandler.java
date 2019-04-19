@@ -140,7 +140,7 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state().equals(IdleState.READER_IDLE)) {
-                logger.info("长期没收到服务器推送数据");
+                logger.info("IdleState.READER_IDLE");
             } else if (event.state().equals(IdleState.WRITER_IDLE)) {
                 if (SystemConstant.HEARTBEAT) {
                     MessageProtocol protocol = new MessageProtocol(
@@ -154,7 +154,7 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
                 }
 
             } else if (event.state().equals(IdleState.ALL_IDLE)) {
-                System.out.println("ALL");
+                System.out.println("IdleState.ALL_IDLE");
             }
         }
     }

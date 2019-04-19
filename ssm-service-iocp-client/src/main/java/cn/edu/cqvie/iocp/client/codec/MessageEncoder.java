@@ -57,6 +57,7 @@ public class MessageEncoder extends MessageToByteEncoder<MessageProtocol> {
         logger.info("encode haxString:{}", ByteUtil.byteArrayToHexString(packet));
         out.writeBytes(packet);
 
+        // 发送消息
         if (msg.getDirection() == DirectionEnum.REQUEST.getCode()) {
             SessionContent instance = SessionContent.getInstance();
             instance.getSession().put(ctx.channel().id().asLongText().concat(String.valueOf(msg.getPacketNo())), System.currentTimeMillis());

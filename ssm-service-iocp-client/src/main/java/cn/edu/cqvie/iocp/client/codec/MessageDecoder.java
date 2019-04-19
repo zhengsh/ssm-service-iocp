@@ -82,6 +82,7 @@ public class MessageDecoder extends ReplayingDecoder<DecodeStateEnum> {
 
             out.add(protocol);
 
+            // 收到消息记录消息的时间
             if (protocol.getDirection() == DirectionEnum.ANSWER.getCode()) {
                 SessionContent instance = SessionContent.getInstance();
                 String k = ctx.channel().id().asLongText().concat(String.valueOf(protocol.getPacketNo()));

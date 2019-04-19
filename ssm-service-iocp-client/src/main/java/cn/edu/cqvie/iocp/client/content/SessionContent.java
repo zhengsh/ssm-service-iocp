@@ -2,6 +2,7 @@ package cn.edu.cqvie.iocp.client.content;
 
 import cn.edu.cqvie.iocp.client.service.impl.LoginServiceImpl;
 import cn.edu.cqvie.iocp.engine.em.CommandEnum;
+import cn.edu.cqvie.iocp.engine.util.ExpiryMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ public class SessionContent {
 
     private static SessionContent instance = new SessionContent();
 
-    private Map<String, Long> session = new ConcurrentHashMap<>(1024);
+    private Map<String, Long> session = new ExpiryMap<>(1024,10 * 6000);
 
 
     private SessionContent() {

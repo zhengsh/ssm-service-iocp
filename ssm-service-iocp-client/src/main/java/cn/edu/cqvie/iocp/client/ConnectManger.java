@@ -30,7 +30,7 @@ public class ConnectManger {
 
     private static ConnectManger instance = new ConnectManger();
     EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
-    private List<Channel> channels = new ArrayList<>(256);
+    private List<Channel> channels = new ArrayList<>(1024);
 
     private ConnectManger() {
 
@@ -61,8 +61,8 @@ public class ConnectManger {
                         }
                     });
 
-            // 一个终端200个连接
-            for (int i = 0; i < 1024; i++) {
+            // 一个终端1024个连接
+            for (int i = 0; i < 2; i++) {
                 ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
                 channels.add(channelFuture.channel());
                 channelFuture.addListener(new ConnectionListener());

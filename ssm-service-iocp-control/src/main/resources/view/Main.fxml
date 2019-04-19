@@ -12,8 +12,8 @@
 
         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
-                <Label fx:id="labelCountTitle" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="70.0"
-                       prefWidth="80.0" text="Connect:" textFill="#4e72fc">
+                <Label fx:id="labelCountTitle" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="40.0"
+                       prefWidth="80.0" text="CNT:" textFill="#4e72fc">
                     <opaqueInsets>
                         <Insets/>
                     </opaqueInsets>
@@ -25,7 +25,7 @@
                     </font>
                 </Label>
 
-                <Label fx:id="labelCount" prefHeight="60.0" prefWidth="140.0" text="0" textFill="#4e72fc">
+                <Label fx:id="labelCount" prefHeight="60.0" prefWidth="180.0" text="0" textFill="#4e72fc">
                     <opaqueInsets>
                         <Insets/>
                     </opaqueInsets>
@@ -63,7 +63,7 @@
                 </Label>
 
                 <Label fx:id="labelTimeTitle" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="60.0"
-                       prefWidth="80.0" text="Timing:" textFill="#4e72fc">
+                       prefWidth="80.0" text="TIME:" textFill="#4e72fc">
                     <opaqueInsets>
                         <Insets/>
                     </opaqueInsets>
@@ -75,7 +75,7 @@
                     </font>
                 </Label>
 
-                <Label fx:id="labelTime" prefHeight="60.0" prefWidth="120.0" text="0" textFill="#fac64d">
+                <Label fx:id="labelTime" prefHeight="60.0" prefWidth="180.0" text="0" textFill="#fac64d">
                     <opaqueInsets>
                         <Insets/>
                     </opaqueInsets>
