@@ -12,8 +12,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class MessageClient {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageClient.class);
-    private final ReentrantLock lock = new ReentrantLock();
-    private final Condition stop = lock.newCondition();
 
     public static void main(String[] args) {
         new MessageClient().start();
@@ -23,15 +21,12 @@ public class MessageClient {
         ConnectManger messageClient = ConnectManger.getInstance();
         messageClient.start();
         logger.info("service start success !~");
-        addHook(messageClient);
-        //主线程阻塞等待，守护线程释放锁后退出
-        try {
-            lock.lock();
-            stop.await();
-        } catch (InterruptedException e) {
-            logger.warn(" service   stopped, interrupted by other thread!", e);
-        } finally {
-            lock.unlock();
+        for (;;) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -46,12 +41,6 @@ public class MessageClient {
                 logger.error("MessageClient stop exception ", e);
             }
             logger.info("jvm exit, all service stopped.");
-            try {
-                lock.lock();
-                stop.signal();
-            } finally {
-                lock.unlock();
-            }
         }, "MessageClient-shutdown-hook"));
     }
 }

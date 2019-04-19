@@ -22,7 +22,6 @@ public class MessageEncoder extends MessageToByteEncoder<MessageProtocol> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, MessageProtocol msg, ByteBuf out) throws Exception {
-        logger.info("MessageEncoder encode invoked!");
 
         final byte[] heard = StringUtil.strToByteArray(msg.getHeadFlag());
         byte[] bytes = StringUtil.strToByteArray(JSONObject.toJSONString(msg.getData()));
@@ -45,7 +44,6 @@ public class MessageEncoder extends MessageToByteEncoder<MessageProtocol> {
         // data 17 - (17 + length)
         System.arraycopy(bytes, 0, protocol, 17, dataLen);
         // check code
-        logger.debug("encode serial number:{} data packet length:{}", msg.getPacketNo(), protocol.length);
         int cc = CRC16.crc16CcittXmodemShort(protocol);
 
         int len = 17 + dataLen + 4;

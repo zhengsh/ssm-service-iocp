@@ -32,7 +32,6 @@ public class MessageDecoder extends ReplayingDecoder<DecodeStateEnum> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        logger.info("MessageDecoder decode invoked!");
         try {
             // TODO 待优化
             byte[] head = new byte[17];
@@ -62,8 +61,8 @@ public class MessageDecoder extends ReplayingDecoder<DecodeStateEnum> {
             System.arraycopy(head, 0, packet, 0, head.length);
             System.arraycopy(content, 0, packet, 17, len);
             int i = CRC16.crc16CcittXmodem(packet);
-            if (cc == i) {
-                logger.info("decode crc16 success");
+            if (cc != i) {
+                logger.error("decode crc16 fail {}", cc);
             }
 
             // 校验包
@@ -81,7 +80,7 @@ public class MessageDecoder extends ReplayingDecoder<DecodeStateEnum> {
 
             out.add(protocol);
         } catch (Throwable t) {
-            logger.error("decode fail {}", t);
+            logger.error("decode fail", t);
             throw t;
         }
     }

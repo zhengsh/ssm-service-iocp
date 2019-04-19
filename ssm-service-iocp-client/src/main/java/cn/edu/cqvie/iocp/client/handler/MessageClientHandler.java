@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 消息客户端
@@ -36,14 +37,15 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
     private int serialNum = 1;
 
     private final String username = uuid();
-    private volatile Map<Integer, CommandEnum> message = new ConcurrentHashMap<>();
-    private volatile Map<String, Long> controlMap = new ConcurrentHashMap<>();
+
+    private Map<String, Long> controlMap = new ConcurrentHashMap<>();
+    private Map<Integer, CommandEnum> message = new ConcurrentHashMap<>();
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         logger.error("通道已连接, object: {}", this);
 
-        int serialNum = ++this.serialNum;
+        int serialNum = this.serialNum++;
         String password = "password";
         MessageProtocol protocol = new MessageProtocol(
                 serialNum,

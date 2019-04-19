@@ -56,13 +56,13 @@ public class ConnectManger {
                             pipeline.addLast(new MessageEncoder());
                             pipeline.addLast(new MessageDecoder());
 
-                            pipeline.addLast(new IdleStateHandler(2, 2, 10, TimeUnit.SECONDS));
+                            pipeline.addLast(new IdleStateHandler(10, 10, 30, TimeUnit.SECONDS));
                             pipeline.addLast(new MessageClientHandler());
                         }
                     });
 
             // 一个终端200个连接
-            for (int i = 0; i < 1024; i++) {
+            for (int i = 0; i < 2; i++) {
                 ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
                 channels.add(channelFuture.channel());
                 channelFuture.addListener(new ConnectionListener());
