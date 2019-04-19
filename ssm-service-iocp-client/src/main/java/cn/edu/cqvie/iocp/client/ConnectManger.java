@@ -1,9 +1,9 @@
 package cn.edu.cqvie.iocp.client;
 
+import cn.edu.cqvie.iocp.client.codec.MessageDecoder;
+import cn.edu.cqvie.iocp.client.codec.MessageEncoder;
 import cn.edu.cqvie.iocp.client.handler.MessageClientHandler;
 import cn.edu.cqvie.iocp.client.listener.ConnectionListener;
-import cn.edu.cqvie.iocp.engine.codec.MessageDecoder;
-import cn.edu.cqvie.iocp.engine.codec.MessageEncoder;
 import cn.edu.cqvie.iocp.engine.constant.SystemConstant;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;

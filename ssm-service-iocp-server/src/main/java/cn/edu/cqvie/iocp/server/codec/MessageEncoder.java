@@ -1,4 +1,4 @@
-package cn.edu.cqvie.iocp.engine.codec;
+package cn.edu.cqvie.iocp.server.codec;
 
 import cn.edu.cqvie.iocp.engine.bean.MessageProtocol;
 import cn.edu.cqvie.iocp.engine.util.ByteUtil;
