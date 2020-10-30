@@ -1,16 +1,13 @@
 package cn.edu.cqvie.iocp.control;
 
 import cn.edu.cqvie.iocp.client.MessageClient;
-import cn.edu.cqvie.iocp.engine.pool.ThreadPool;
 import cn.edu.cqvie.iocp.server.MessageServer;
 import cn.edu.cqvie.iocp.simu.SimuTask;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
