@@ -9,6 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * @author ZEHNG SHAOHONG
  */
+@SuppressWarnings("ALL")
 public class MessageClient {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageClient.class);
@@ -25,8 +26,9 @@ public class MessageClient {
         logger.info("service start success !~");
         addHook(messageClient);
         //主线程阻塞等待，守护线程释放锁后退出
+        lock.lock();
         try {
-            lock.lock();
+            //noinspection AlibabaLockShouldWithTryFinally
             stop.await();
         } catch (InterruptedException e) {
             logger.warn(" service   stopped, interrupted by other thread!", e);
@@ -46,8 +48,8 @@ public class MessageClient {
                 logger.error("MessageClient stop exception ", e);
             }
             logger.info("jvm exit, all service stopped.");
+            lock.lock();
             try {
-                lock.lock();
                 stop.signal();
             } finally {
                 lock.unlock();

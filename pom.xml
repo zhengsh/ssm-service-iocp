@@ -15,6 +15,7 @@
         <module>ssm-service-iocp-client</module>
         <module>ssm-service-iocp-control</module>
         <module>ssm-service-iocp-simu</module>
+        <module>ssm-service-iocp-chat</module>
     </modules>
 
 
