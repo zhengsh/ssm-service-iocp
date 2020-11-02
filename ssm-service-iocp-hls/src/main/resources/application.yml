@@ -1,0 +1,7 @@
+server:
+  port: 9090
+#debug: true
+logging:
+  level:
+    root: info
+    org.red5: debug
