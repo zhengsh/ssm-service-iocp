@@ -3,9 +3,7 @@ package cn.edu.cqvie.iocp.server;
 import cn.edu.cqvie.iocp.engine.codec.MessageDecoder;
 import cn.edu.cqvie.iocp.engine.codec.MessageEncoder;
 import cn.edu.cqvie.iocp.engine.em.DecodeStateEnum;
-import cn.edu.cqvie.iocp.server.handler.ConnectCountHandler;
-import cn.edu.cqvie.iocp.server.handler.MessageReadHandler;
-import cn.edu.cqvie.iocp.server.handler.MessageWriteHandler;
+import cn.edu.cqvie.iocp.server.handler.*;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -31,6 +29,10 @@ public class MessageChannelInitializer extends ChannelInitializer {
         pipeline.addLast(new IdleStateHandler(60, 60, 180, TimeUnit.SECONDS));
         pipeline.addLast(new MessageReadHandler());
         pipeline.addLast(new MessageWriteHandler());
+        // 消息客户端在其他服务节点，路由过去
+        pipeline.addLast(new MessageRouteHandler());
+        // 消息延迟发
+        pipeline.addLast(new MessageDelayHandler());
         pipeline.addLast(new ConnectCountHandler());
 
     }

@@ -1,7 +1,10 @@
 package cn.edu.cqvie.iocp.server;
 
+import cn.edu.cqvie.iocp.engine.config.SystemConfig;
 import cn.edu.cqvie.iocp.engine.constant.SystemConstant;
 import cn.edu.cqvie.iocp.engine.pool.ThreadPool;
+import cn.edu.cqvie.iocp.engine.redis.RedisManager;
+import cn.edu.cqvie.iocp.engine.redis.RedisOperation;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -10,6 +13,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +36,20 @@ public class MessageServer {
 
 
     public static void start(int port) throws InterruptedException {
+        //初始化配置
+        initConfig();
+
+        initServer(port);
+    }
+
+    private static void initConfig() {
+        // todo 注册服务器 id
+        // todo 定时任务发送心跳，更新 redis ttl
+        RedisOperation redisOperation = RedisOperation.getInstance();
+        redisOperation.set("iocp:server_ids", SystemConfig.SERVER_ID, 0L);
+    }
+
+    private static void initServer(int port) throws InterruptedException {
         int nThread = Runtime.getRuntime().availableProcessors() * 2;
         bossGroup = new NioEventLoopGroup(nThread);
         workerGroup = new NioEventLoopGroup(nThread,
@@ -44,7 +62,7 @@ public class MessageServer {
                     .childHandler(new MessageChannelInitializer())
                     .option(ChannelOption.SO_BACKLOG, 4096)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
-            channelFuture = b.bind("0.0.0.0",port).sync();
+            channelFuture = b.bind("0.0.0.0", port).sync();
             channelFuture.channel().closeFuture().sync();
         } finally {
             stop();
