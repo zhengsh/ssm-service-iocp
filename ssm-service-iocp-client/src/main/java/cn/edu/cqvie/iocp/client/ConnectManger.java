@@ -62,13 +62,13 @@ public class ConnectManger {
                     });
 
             // 一个终端200个连接
-            for (int i = 0; i < 200; i++) {
+            //for (int i = 0; i < 1; i++) {
                 ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
                 channels.add(channelFuture.channel());
                 channelFuture.addListener(new ConnectionListener());
 
-                Thread.sleep(10);
-            }
+                //Thread.sleep(10);
+            //}
 
         } catch (Throwable t) {
             t.printStackTrace();

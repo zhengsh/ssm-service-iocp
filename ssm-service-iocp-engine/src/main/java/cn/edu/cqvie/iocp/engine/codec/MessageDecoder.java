@@ -11,6 +11,7 @@ import io.netty.handler.codec.ReplayingDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class MessageDecoder extends ReplayingDecoder<DecodeStateEnum> {
             System.arraycopy(head, 0, h, 0, 4);
 
             // flag  4
-            String f = new String(h, "UTF-8");
+            String f = new String(h, StandardCharsets.UTF_8);
             // version 2
             short v = ByteUtil.byteArrayToShort(new byte[]{head[4], head[5]});
             // serial number 4

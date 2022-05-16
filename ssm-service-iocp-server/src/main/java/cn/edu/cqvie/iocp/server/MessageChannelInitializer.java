@@ -26,13 +26,13 @@ public class MessageChannelInitializer extends ChannelInitializer {
 
         pipeline.addLast(new MessageEncoder());
         pipeline.addLast(new MessageDecoder(DecodeStateEnum.HEAD));
-        pipeline.addLast(new IdleStateHandler(60, 60, 180, TimeUnit.SECONDS));
+        pipeline.addLast(new IdleStateHandler(9, 15, 30, TimeUnit.SECONDS));
         pipeline.addLast(new MessageReadHandler());
         pipeline.addLast(new MessageWriteHandler());
         // 消息客户端在其他服务节点，路由过去
-        pipeline.addLast(new MessageRouteHandler());
+        //pipeline.addLast(new MessageRouteHandler());
         // 消息延迟发
-        pipeline.addLast(new MessageDelayHandler());
+        //pipeline.addLast(new MessageDelayHandler());
         pipeline.addLast(new ConnectCountHandler());
 
     }

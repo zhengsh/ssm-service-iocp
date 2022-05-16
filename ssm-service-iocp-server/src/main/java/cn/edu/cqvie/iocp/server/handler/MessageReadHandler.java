@@ -1,6 +1,9 @@
 package cn.edu.cqvie.iocp.server.handler;
 
 import cn.edu.cqvie.iocp.engine.bean.MessageProtocol;
+import cn.edu.cqvie.iocp.engine.bean.dto.UserDTO;
+import cn.edu.cqvie.iocp.engine.em.CommandEnum;
+import cn.edu.cqvie.iocp.engine.em.DirectionEnum;
 import cn.edu.cqvie.iocp.server.content.ServiceContent;
 import cn.edu.cqvie.iocp.server.content.SessionContent;
 import cn.edu.cqvie.iocp.server.task.TaskManager;
@@ -89,7 +92,7 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageProto
 
 
     /**
-     * 事件处理
+     * 事件处理 (心跳超时处理)
      *
      * @param ctx
      * @param evt
@@ -100,6 +103,17 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageProto
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.READER_IDLE) {
+                // 回一个等出的消息
+                if (ctx.channel().isActive()) {
+                    MessageProtocol protocol = new MessageProtocol(
+                            1000,
+                            DirectionEnum.ANSWER.getCode(),
+                            CommandEnum.A005.getCode(),
+                            "idle timeout"
+                    );
+                    ctx.writeAndFlush(protocol);
+                }
+
                 // 移除通道
                 SessionContent.getInstance().remove(ctx.channel());
                 ctx.disconnect();
