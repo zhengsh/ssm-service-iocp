@@ -56,7 +56,7 @@ public class ConnectManger {
                             pipeline.addLast(new MessageEncoder());
                             pipeline.addLast(new MessageDecoder());
 
-                            pipeline.addLast(new IdleStateHandler(2, 2, 10, TimeUnit.SECONDS));
+                            pipeline.addLast(new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS));
                             pipeline.addLast(new MessageClientHandler());
                         }
                     });

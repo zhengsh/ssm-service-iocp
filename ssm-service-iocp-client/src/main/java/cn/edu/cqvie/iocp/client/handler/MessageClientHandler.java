@@ -39,10 +39,10 @@ public class MessageClientHandler extends SimpleChannelInboundHandler<MessagePro
     private long messageTime;
 
     private final String username = uuid();
-    private Map<Integer, CommandEnum> message = new ConcurrentHashMap<>();
+    private final Map<Integer, CommandEnum> message = new ConcurrentHashMap<>();
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    public void channelActive(ChannelHandlerContext ctx) {
         logger.info("通道已连接！！");
 
         int serialNum = ++this.serialNum;

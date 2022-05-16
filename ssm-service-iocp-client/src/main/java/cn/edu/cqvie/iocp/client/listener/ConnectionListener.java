@@ -25,7 +25,7 @@ public class ConnectionListener implements ChannelFutureListener {
             loop.schedule(() -> {
                 logger.info("服务端链接不上，开始重连操作...");
                 ConnectManger.getInstance().start();
-            }, 1L, TimeUnit.SECONDS);
+            }, 2L, TimeUnit.SECONDS);
         } else {
             logger.info("服务端链接成功...");
         }

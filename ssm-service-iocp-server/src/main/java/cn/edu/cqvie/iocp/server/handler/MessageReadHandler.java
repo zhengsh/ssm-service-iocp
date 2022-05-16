@@ -27,6 +27,8 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageProto
 
     private int count;
 
+    int readIdleTimes = 0;
+
     /**
      * 客户端和服务器建立连接
      *
@@ -103,21 +105,23 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageProto
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.READER_IDLE) {
+                readIdleTimes++;
                 // 回一个等出的消息
-                if (ctx.channel().isActive()) {
+                if (ctx.channel().isActive() && readIdleTimes > 3) {
+                    logger.info(" [server]读空闲超过 {} 次，关闭连接，释放更多资源", 3);
+
                     MessageProtocol protocol = new MessageProtocol(
                             1000,
                             DirectionEnum.ANSWER.getCode(),
                             CommandEnum.A005.getCode(),
-                            "idle timeout"
+                            "idle close"
                     );
                     ctx.writeAndFlush(protocol);
+                    // 移除通道
+                    SessionContent.getInstance().remove(ctx.channel());
+                    ctx.disconnect();
+                    logger.info("超时关闭 : {}", ctx);
                 }
-
-                // 移除通道
-                SessionContent.getInstance().remove(ctx.channel());
-                ctx.disconnect();
-                logger.info("超时关闭 : {}", ctx);
             }
         } else {
             super.userEventTriggered(ctx, evt);

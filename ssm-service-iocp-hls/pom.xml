@@ -16,7 +16,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <encoding>UTF-8</encoding>
-        <spring-boot.version>2.4.0-SNAPSHOT</spring-boot.version>
+        <spring-boot.version>2.4.6-SNAPSHOT</spring-boot.version>
         <red5-server.version>1.2.3</red5-server.version>
     </properties>
 
