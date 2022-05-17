@@ -59,6 +59,8 @@ public class RedisOperation implements Closeable {
         redisson.getBucket(key).unlinkAsync();
     }
 
+    // zset
+
 
     public static void main(String[] args) {
         RedisOperation redisOpt = RedisOperation.getInstance();

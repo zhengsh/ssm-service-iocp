@@ -5,8 +5,10 @@ import cn.edu.cqvie.iocp.engine.constant.SystemConstant;
 import cn.edu.cqvie.iocp.engine.pool.ThreadPool;
 import cn.edu.cqvie.iocp.engine.redis.RedisManager;
 import cn.edu.cqvie.iocp.engine.redis.RedisOperation;
+import cn.edu.cqvie.iocp.server.quartz.QuartzService;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -37,16 +39,26 @@ public class MessageServer {
 
     public static void start(int port) throws InterruptedException {
         //初始化配置
-        initConfig();
+        String hostAddress = SystemConstant.SERVER_HOST + ":" + SystemConstant.SERVER_PORT;
+
+        initConfig(hostAddress);
 
         initServer(port);
     }
 
-    private static void initConfig() {
+    private static void initConfig(String address) {
         // todo 注册服务器 id
         // todo 定时任务发送心跳，更新 redis ttl
         RedisOperation redisOperation = RedisOperation.getInstance();
         redisOperation.set("iocp:server_ids", SystemConfig.SERVER_ID, 0L);
+        String key = String.format("iocp:server_id:%s", SystemConfig.SERVER_ID);
+        redisOperation.set(key, address, 10L);
+
+        try {
+            QuartzService.start(key, address);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static void initServer(int port) throws InterruptedException {
@@ -63,7 +75,7 @@ public class MessageServer {
                     .option(ChannelOption.SO_BACKLOG, 4096)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
             channelFuture = b.bind("0.0.0.0", port).sync();
-            channelFuture.channel().closeFuture().sync();
+            MessageServer.channelFuture.channel().closeFuture().sync();
         } finally {
             stop();
         }
