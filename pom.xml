@@ -31,7 +31,7 @@
         <log4j-slf4j-impl.version>2.3</log4j-slf4j-impl.version>
         <disruptor.version>3.3.4</disruptor.version>
         <lombok.version>1.18.6</lombok.version>
-        <fastjson.version>1.2.41</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <redisson.version>3.10.6</redisson.version>
     </properties>
 
